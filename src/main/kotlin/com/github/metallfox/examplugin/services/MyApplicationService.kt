@@ -1,6 +1,6 @@
-package org.jetbrains.plugins.template.services
+package com.github.metallfox.examplugin.services
 
-import org.jetbrains.plugins.template.MyBundle
+import com.github.metallfox.examplugin.MyBundle
 
 class MyApplicationService {
 
