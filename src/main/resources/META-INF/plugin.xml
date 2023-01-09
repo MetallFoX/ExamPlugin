@@ -1,18 +1,36 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <id>com.github.metallfox.examplugin</id>
-    <name>ExamPlugin</name>
+    <id>io.exam.intellij.plugin</id>
+    <name>Exam</name>
     <vendor>metallfox</vendor>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.xml</depends>
+    <depends>com.intellij.modules.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="com.github.metallfox.examplugin.services.MyApplicationService"/>
-        <projectService serviceImplementation="com.github.metallfox.examplugin.services.MyProjectService"/>
+        <postStartupActivity implementation="io.exam.intellij.plugin.factory.ExamPluginStartUpAction"/>
+        <!--<toolWindow id="Exam" secondary="false" icon="AllIcons.General.Modified" anchor="right"
+                    factoryClass="io.exam.intellij.plugin.factory.ExamToolWindowFactory"/>-->
+        <notificationGroup displayType="BALLOON" id="ExamNotification"/>
+
+        <!-- Settings -->
+        <applicationConfigurable parentId="tools" instance="io.exam.intellij.plugin.settings.ExamSettingsConfigurable"
+                                 id="io.exam.intellij.plugin.settings.ExamSettingsConfigurable"
+                                 displayName="Exam"/>
+        <applicationService serviceImplementation="io.exam.intellij.plugin.settings.ExamSettingsState"/>
     </extensions>
 
-    <applicationListeners>
-        <listener class="com.github.metallfox.examplugin.listeners.MyProjectManagerListener"
-                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
-    </applicationListeners>
+    <actions>
+        <group id="Exam.Actions">
+            <action id="Exam.RunExamples"
+                    class="io.exam.intellij.plugin.action.RunExamplesAction"
+                    icon="AllIcons.Actions.Execute">
+            </action>
+            <action id="Exam.OpenExample"
+                    class="io.exam.intellij.plugin.action.OpenExampleAction"
+                    icon="AllIcons.General.Web">
+            </action>
+        </group>
+    </actions>
 </idea-plugin>

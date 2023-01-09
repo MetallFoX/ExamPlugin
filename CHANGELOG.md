@@ -1,6 +1,6 @@
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
 
-# ExamPlugin Changelog
+# Exam Plugin Changelog
 
 ## [Unreleased]
 ### Added
