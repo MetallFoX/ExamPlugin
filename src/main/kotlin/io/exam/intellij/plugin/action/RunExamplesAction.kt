@@ -13,6 +13,7 @@ import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.xml.XmlTag
+import org.intellij.plugins.markdown.lang.psi.impl.MarkdownHeader
 import java.nio.file.FileSystems
 
 class RunExamplesAction : AnAction(), DumbAware {
@@ -50,7 +51,13 @@ class RunExamplesAction : AnAction(), DumbAware {
             ?: listOf("--tests", "\"$spec\"")
 
     private fun selectedExamples(e: AnActionEvent) = e.getData(LangDataKeys.PSI_ELEMENT_ARRAY)
-        ?.mapNotNull { (it as? XmlTag)?.getAttributeValue("name") } ?: emptyList()
+        ?.mapNotNull {
+            when (it) {
+                is XmlTag -> it.getAttributeValue("name")
+                is MarkdownHeader -> it.anchorText
+                else -> error("Unsupported element type: $it" )
+            }
+        } ?: emptyList()
 
     private fun specQualifiedName(file: VirtualFile, externalProjectPath: String) =
         // TODO: Use JPS module? See https://plugins.jetbrains.com/docs/intellij/external-builder-api.html
