@@ -10,19 +10,19 @@
     <depends>org.intellij.plugins.markdown</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <!--<postStartupActivity implementation="io.exam.intellij.plugin.factory.ExamPluginStartUpAction"/>-->
         <toolWindow id="Exam" secondary="false" icon="AllIcons.General.Modified" anchor="right"
                     factoryClass="io.exam.intellij.plugin.factory.ExamToolWindowFactory"/>
         <notificationGroup displayType="BALLOON" id="ExamNotification"/>
+
+        <!-- Exam Language -->
+        <fileType id="Exam" name="Exam" language="Exam" implementationClass="io.exam.intellij.plugin.filetype.ExamFileType"/>
+        <lang.substitutor id="ExamLanguageSubstitutor" language="Exam" implementationClass="io.exam.intellij.plugin.filetype.ExamLanguageSubstitutor"/>
 
         <!-- Settings -->
         <applicationConfigurable parentId="tools" instance="io.exam.intellij.plugin.settings.ExamSettingsConfigurable"
                                  id="io.exam.intellij.plugin.settings.ExamSettingsConfigurable"
                                  displayName="Exam"/>
         <applicationService serviceImplementation="io.exam.intellij.plugin.settings.ExamSettingsState"/>
-
-        <fileType id="Exam" name="Exam" language="Exam" implementationClass="io.exam.intellij.plugin.filetype.ExamFileType"/>
-        <lang.substitutor id="ExamLanguageSubstitutor" language="Exam" implementationClass="io.exam.intellij.plugin.filetype.ExamLanguageSubstitutor"/>
     </extensions>
 
     <actions>
