@@ -10,9 +10,9 @@
     <depends>org.intellij.plugins.markdown</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <postStartupActivity implementation="io.exam.intellij.plugin.factory.ExamPluginStartUpAction"/>
-        <!--<toolWindow id="Exam" secondary="false" icon="AllIcons.General.Modified" anchor="right"
-                    factoryClass="io.exam.intellij.plugin.factory.ExamToolWindowFactory"/>-->
+        <!--<postStartupActivity implementation="io.exam.intellij.plugin.factory.ExamPluginStartUpAction"/>-->
+        <toolWindow id="Exam" secondary="false" icon="AllIcons.General.Modified" anchor="right"
+                    factoryClass="io.exam.intellij.plugin.factory.ExamToolWindowFactory"/>
         <notificationGroup displayType="BALLOON" id="ExamNotification"/>
 
         <!-- Settings -->
