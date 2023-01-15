@@ -5,9 +5,11 @@
 ## [Unreleased]
 ### Added
 - Add Exam file type
-- Debug button add
-- Markdown example name from header text
-- Initial scaffold created from [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template)
+- Add Debug button
+
+### Changed
+- Add Exam tool window straightway
+- Change markdown example name to header text
 
 ### Fixed
 - Invalid test name for markdown example name matching other header #8
