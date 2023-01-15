@@ -28,6 +28,10 @@
                     class="io.exam.intellij.plugin.action.RunExamplesAction"
                     icon="AllIcons.Actions.Execute">
             </action>
+            <action id="Exam.DebugExamples"
+                    class="io.exam.intellij.plugin.action.DebugExamplesAction"
+                    icon="AllIcons.Actions.StartDebugger">
+            </action>
             <action id="Exam.OpenExample"
                     class="io.exam.intellij.plugin.action.OpenExampleAction"
                     icon="AllIcons.General.Web">

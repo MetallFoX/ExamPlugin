@@ -16,7 +16,7 @@ import com.intellij.psi.xml.XmlTag
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownHeader
 import java.nio.file.FileSystems
 
-class RunExamplesAction : AnAction(), DumbAware {
+open class RunExamplesAction : AnAction(), DumbAware {
     companion object {
         private const val TEST_RESOURCES_FOLDER = "/src/test/resources/"
     }
@@ -39,11 +39,13 @@ class RunExamplesAction : AnAction(), DumbAware {
                     )
                 }
             },
-            DefaultRunExecutor.getRunExecutorInstance().id,
+            getExecutor(),
             project,
             ProjectSystemId.findById(externalSystem.getExternalSystemId()!!)!!
         )
     }
+
+    protected open fun getExecutor() = DefaultRunExecutor.getRunExecutorInstance().id
 
     private fun tests(spec: String, examples: List<String>) =
         examples.flatMap { example -> listOf("--tests", "\"$spec.$example\"") }
@@ -55,7 +57,7 @@ class RunExamplesAction : AnAction(), DumbAware {
             when (it) {
                 is XmlTag -> it.getAttributeValue("name")
                 is MarkdownHeader -> it.anchorText
-                else -> error("Unsupported element type: $it" )
+                else -> error("Unsupported element type: $it")
             }
         } ?: emptyList()
 
