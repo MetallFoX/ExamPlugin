@@ -20,6 +20,9 @@
                                  id="io.exam.intellij.plugin.settings.ExamSettingsConfigurable"
                                  displayName="Exam"/>
         <applicationService serviceImplementation="io.exam.intellij.plugin.settings.ExamSettingsState"/>
+
+        <fileType id="Exam" name="Exam" language="Exam" implementationClass="io.exam.intellij.plugin.filetype.ExamFileType"/>
+        <lang.substitutor id="ExamLanguageSubstitutor" language="Exam" implementationClass="io.exam.intellij.plugin.filetype.ExamLanguageSubstitutor"/>
     </extensions>
 
     <actions>
