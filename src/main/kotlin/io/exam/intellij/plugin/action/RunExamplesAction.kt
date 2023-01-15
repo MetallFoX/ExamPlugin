@@ -19,6 +19,7 @@ import java.nio.file.FileSystems
 open class RunExamplesAction : AnAction(), DumbAware {
     companion object {
         private const val TEST_RESOURCES_FOLDER = "/src/test/resources/"
+        private val MD_HEADER_OCCURRENCE = Regex("-\\d+$")
     }
 
     override fun actionPerformed(e: AnActionEvent) {
@@ -56,7 +57,7 @@ open class RunExamplesAction : AnAction(), DumbAware {
         ?.mapNotNull {
             when (it) {
                 is XmlTag -> it.getAttributeValue("name")
-                is MarkdownHeader -> it.anchorText
+                is MarkdownHeader -> it.anchorText?.replace(MD_HEADER_OCCURRENCE, "")
                 else -> error("Unsupported element type: $it")
             }
         } ?: emptyList()
