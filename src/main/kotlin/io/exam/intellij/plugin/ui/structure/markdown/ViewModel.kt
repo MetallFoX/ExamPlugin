@@ -3,6 +3,7 @@ package io.exam.intellij.plugin.ui.structure.markdown
 import com.intellij.icons.AllIcons
 import com.intellij.ide.structureView.StructureViewTreeElement
 import com.intellij.ide.structureView.TextEditorBasedStructureViewModel
+import com.intellij.ide.structureView.TreeBasedStructureViewBuilder
 import com.intellij.ide.structureView.impl.common.PsiTreeElementBase
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
@@ -25,8 +26,9 @@ class MarkdownExamSpecTreeElement(private val file: MarkdownExamFile) : PsiTreeE
     override fun getPresentableText() = file.name
 
     override fun getChildrenBase(): List<MarkdownExamExampleElement> =
-        PsiTreeUtil.collectElements(file, ::isExample).map { it as MarkdownHeader }
-            .map { MarkdownExamExampleElement(it) }
+        PsiTreeUtil.collectElements(file, ::isExample)
+            .map { it as MarkdownHeader }
+            .map(::MarkdownExamExampleElement)
 
     private fun isExample(element: PsiElement) =
         element is MarkdownHeader && getLink(element)?.let { getLinkTitle(it)?.text != BEFORE_TITLE } ?: false
@@ -37,7 +39,13 @@ class MarkdownExamSpecTreeElement(private val file: MarkdownExamFile) : PsiTreeE
 }
 
 class MarkdownExamExampleElement(private val element: MarkdownHeader) : PsiTreeElementBase<MarkdownHeader>(element) {
-    override fun getPresentableText() = element.anchorText
+    override fun getPresentableText() = element.buildVisibleText(true) ?: "Unknown"
     override fun getChildrenBase() = emptyList<StructureViewTreeElement>()
     override fun getIcon(open: Boolean) = AllIcons.Scope.Tests
+}
+
+class ExamSpecMarkdownStructureViewBuilder(private val psiFile: MarkdownExamFile) :
+    TreeBasedStructureViewBuilder() {
+    override fun createStructureViewModel(editor: Editor?) = MarkdownExamSpecStructureViewModel(psiFile, editor)
+    override fun isRootNodeShown() = false
 }
