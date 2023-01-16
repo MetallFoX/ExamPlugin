@@ -3,6 +3,8 @@
 # Exam Plugin Changelog
 
 ## [Unreleased]
+
+## [0.1.0]
 ### Added
 - Add Exam file type
 - Add Debug button
@@ -13,3 +15,4 @@
 
 ### Fixed
 - Invalid test name for markdown example name matching other header #8
+
