@@ -27,9 +27,9 @@ class ExamToolWindowFactory(
 ) : ToolWindowFactory, DumbAware, Disposable {
     private var currentFile: VirtualFile? = null
 
-    override fun createToolWindowContent(project: Project, window: ToolWindow) {
-        manageContent(project, window)
-        addListener(project, window)
+    override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
+        manageContent(project, toolWindow)
+        addListener(project, toolWindow)
     }
 
     private fun manageContent(project: Project, window: ToolWindow) {

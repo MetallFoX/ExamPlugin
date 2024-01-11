@@ -3,6 +3,8 @@
 # Exam Plugin Changelog
 
 ## [Unreleased]
+### Fixed
+Unable to run examples in single-module project #25
 
 ## [0.1.0]
 ### Added

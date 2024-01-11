@@ -13,12 +13,14 @@ import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.xml.XmlTag
+import io.exam.intellij.plugin.service.ExamService
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownHeader
 import java.nio.file.FileSystems
 
-open class RunExamplesAction : AnAction(), DumbAware {
+open class RunExamplesAction(private val examService: ExamService = ExamService.INSTANCE) : AnAction(), DumbAware {
     companion object {
         private const val TEST_RESOURCES_FOLDER = "/src/test/resources/"
+        private const val TASK_NAME_DELIMITER = ":"
         private val MD_HEADER_OCCURRENCE = Regex("-\\d+$")
     }
 
@@ -33,10 +35,10 @@ open class RunExamplesAction : AnAction(), DumbAware {
             ExternalSystemTaskExecutionSettings().apply {
                 with(externalSystem) {
                     externalSystemIdString = getExternalSystemId()!!
-                    externalProjectPath = getLinkedProjectPath()!!
-                    taskNames = listOf(getLinkedProjectId()) + tests(
-                        specQualifiedName(file, externalProjectPath),
-                        selectedExamples(e),
+                    externalProjectPath = getLinkedProjectPath()
+                    taskNames = listOf(testTaskName()) + tests(
+                        specQualifiedName(file, getLinkedProjectPath()!!),
+                        selectedExamples(e)
                     )
                 }
             },
@@ -45,6 +47,9 @@ open class RunExamplesAction : AnAction(), DumbAware {
             ProjectSystemId.findById(externalSystem.getExternalSystemId()!!)!!
         )
     }
+
+    private fun ExternalSystemModulePropertyManager.testTaskName() =
+        getLinkedProjectId()!!.replaceBefore(TASK_NAME_DELIMITER, "")
 
     protected open fun getExecutor() = DefaultRunExecutor.getRunExecutorInstance().id
 

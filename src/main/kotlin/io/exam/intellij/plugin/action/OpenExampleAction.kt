@@ -16,20 +16,22 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.io.exists
 import io.exam.intellij.plugin.action.OpenExampleAction.NotificationFactory.copiedTOClipboard
 import io.exam.intellij.plugin.action.OpenExampleAction.NotificationFactory.error
+import io.exam.intellij.plugin.service.ExamService
 import io.exam.intellij.plugin.settings.ExamSettingsState
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownHeader
 import java.awt.datatransfer.StringSelection
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets.UTF_8
+import java.nio.file.Path
 import kotlin.io.path.Path
 
 
-class OpenExampleAction : AnAction(), DumbAware {
+class OpenExampleAction(private val examService: ExamService = ExamService.INSTANCE) : AnAction(), DumbAware {
 
     override fun actionPerformed(e: AnActionEvent) {
         try {
-            findReportPath(getFile(e))?.let { report ->
-                val uri = report.toUri().toString() + (selectedExample(e)?.let(::anchor) ?: "")
+            examService.findReportPath(getFile(e))?.let { report ->
+                val uri = getUri(report, e)
                 if (selectedExample(e) == null) {
                     BrowserUtil.browse(uri)
                 } else {
@@ -41,6 +43,9 @@ class OpenExampleAction : AnAction(), DumbAware {
             notify(error(expected))
         }
     }
+
+    private fun getUri(report: Path, e: AnActionEvent) =
+        report.toUri().toString() + (selectedExample(e)?.let(::anchor) ?: "")
 
     private fun getFile(e: AnActionEvent) = e.getRequiredData(PlatformDataKeys.FILE_EDITOR).file!!
 
@@ -57,20 +62,9 @@ class OpenExampleAction : AnAction(), DumbAware {
         .replace(" ", "-")
         .lowercase()
 
-    private fun findReportPath(file: VirtualFile) = Path(reportLocation(file)).takeIf { it.exists() }
-
-    private fun reportLocation(file: VirtualFile) = file.path
-        // TODO: Use JPS module? See https://plugins.jetbrains.com/docs/intellij/external-builder-api.html
-        .replace("/src/test/resources/", "/build/reports/${getSpecsFolderName()}/")
-        .replace(".xhtml", ".html")
-        .replace(".md", ".html")
-
     private fun notify(notification: Notification) {
         Notifications.Bus.notify(notification)
     }
-
-    private fun getSpecsFolderName() = ApplicationManager.getApplication()
-        .getService(ExamSettingsState::class.java).specsFolderName
 
     private object NotificationFactory {
         fun copiedTOClipboard(uri: String) = Notification(
