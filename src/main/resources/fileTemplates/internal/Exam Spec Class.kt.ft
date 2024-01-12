@@ -1,0 +1,100 @@
+#if (${PACKAGE_NAME} && ${PACKAGE_NAME} != "")package ${PACKAGE_NAME};#end
+
+import io.github.adven27.concordion.extensions.exam.core.AbstractSpecs
+import io.github.adven27.concordion.extensions.exam.core.ExamExtension
+import io.github.adven27.concordion.extensions.exam.db.DbHelpers
+import io.github.adven27.concordion.extensions.exam.db.DbPlugin
+import io.github.adven27.concordion.extensions.exam.db.DbTester
+import io.github.adven27.concordion.extensions.exam.mq.MqPlugin
+import io.github.adven27.concordion.extensions.exam.mq.MqTester
+import io.github.adven27.concordion.extensions.exam.mq.kafka.KafkaConsumeAndSendTester
+import io.github.adven27.concordion.extensions.exam.ws.WsPlugin
+import io.github.adven27.env.container.asCompatibleSubstituteFor
+import io.github.adven27.env.core.Environment
+import io.github.adven27.env.db.postgresql.PostgreSqlContainerSystem
+import io.github.adven27.env.mq.kafka.embedded.EmbeddedKafkaSystem
+import io.github.adven27.env.redis.RedisContainerSystem
+import io.github.adven27.env.wiremock.WiremockSystem
+import org.concordion.api.BeforeExample
+import org.concordion.api.ConcordionResources
+import org.concordion.api.FullOGNL
+import org.concordion.api.extension.Extensions
+import org.concordion.ext.timing.TimerExtension
+import org.springframework.boot.runApplication
+import org.springframework.context.ConfigurableApplicationContext
+
+@Extensions(TimerExtension::class)
+@FullOGNL
+@ConcordionResources(value = ["/specs/*.svg"])
+open class ${NAME} : AbstractSpecs() {
+
+    companion object {
+        @JvmStatic
+        val ENV: ApplicationEnvironment = ApplicationEnvironment().apply { up() }
+        private var SUT: ConfigurableApplicationContext? = null
+        private const val SUT_CONSUMER = "#[[$CONSUMER_GROUP_ID$]]#"
+        protected var DB_TESTER: DbTester = with(ENV.database()) { DbTester(driver, jdbcUrl, username, password) }
+
+        const val TOPIC = "#[[$TOPIC$]]#"
+        const val TOPIC_DLQ = "#[[$TOPIC$]]#.dlq"
+    }
+
+    override fun init() = ExamExtension(
+        WsPlugin(port = ENV.sutPort()),
+        DbPlugin(DB_TESTER),
+        MqPlugin(
+            testers = mapOf(
+                TOPIC.kafkaTester(SUT_CONSUMER),
+                TOPIC_DLQ.kafkaTester()
+            )
+        )
+    )
+        .withHandlebar { it.registerHelpers(DbModelHelpers(DB_TESTER)) }
+
+    private fun String.kafkaTester(sut: String? = null, postfix: String = "", filter: String = "") =
+        this + postfix to object : KafkaConsumeAndSendTester(
+            bootstrapServers = ENV.kafka(),
+            topic = this@kafkaTester,
+            sutConsumerGroup = sut
+        ) {
+            override fun receive(): List<MqTester.Message> = super.receive().filter { it.body.contains(filter) }
+        }
+
+    override fun startSut() {
+        SUT = runApplication<#[[$MAIN_CLASS$]]#> {
+            mainApplicationClass = #[[$MAIN_CLASS$]]#::class.java
+        }
+    }
+
+    override fun stopSut() = SUT!!.stop()
+
+    @BeforeExample
+    fun beforeExample() {
+        ENV.redis().clean()
+    }
+
+    fun getRedisConfigs() = with(ENV.redis()) {
+        keys().flatMap {
+            getMap(it).entries.map { (prop, value) -> Triple(it, prop, value) }
+        }.sortedBy { it.first }
+    }
+}
+
+private const val DOCKER = "#[[$DOCKERHUB_PATH$]]#"
+
+class ApplicationEnvironment : Environment(
+    "#[[$EXTERNAL_API_NAME$]]#" to WiremockSystem(),
+    "REDIS" to RedisContainerSystem("\$DOCKER/redis:5.0.3-alpine" asCompatibleSubstituteFor "redis"),
+    "DB" to PostgreSqlContainerSystem("\$DOCKER/postgres:15-alpine" asCompatibleSubstituteFor "postgres"),
+    "KAFKA" to EmbeddedKafkaSystem()
+) {
+    fun kafka() = env<EmbeddedKafkaSystem>().config.bootstrapServers
+    fun database() = env<PostgreSqlContainerSystem>().config
+    fun redis() = env<RedisContainerSystem>()
+    fun issuers() = env<WiremockSystem>()
+    fun sutPort() = (if ("SPECS_ENV_FIXED".fromPropertyOrElse(false)) 8080 else findAvailableTcpPort()).also {
+        System.setProperty("server.port", it.toString())
+    }
+}
+
+class DbModelHelpers(dbTester: DbTester) : DbHelpers(dbTester)

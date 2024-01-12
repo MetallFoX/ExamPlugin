@@ -1,0 +1,13 @@
+<h3>#[[$ERRORS_EXAMPLE_TITLE$]]#</h3>
+<e:example name="#[[$ERRORS_EXAMPLE_NAME$]]#">
+    <e:get url="#[[$EXAMPLE_ENDPOINT_PATH$]]#" contentType="application/json">
+        <e:case desc="#[[$ERRORS_EXAMPLE_CASE_TITLE$]]#">
+            <e:expected statusCode="400">
+                {
+                "code":"INVALID_FORMAT",
+                "violations": [{"path": "#[[$EXAMPLE_ERROR_CASE_VIOLATED_PATH$]]#", "message": "must not be null"}]
+                }
+            </e:expected>
+        </e:case>
+    </e:get>
+</e:example>

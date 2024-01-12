@@ -8,6 +8,7 @@
     <depends>com.intellij.modules.xml</depends>
     <depends>com.intellij.modules.java</depends>
     <depends>org.intellij.plugins.markdown</depends>
+    <depends>org.jetbrains.kotlin</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow id="Exam" secondary="false" icon="AllIcons.General.Modified" anchor="right"
@@ -23,6 +24,10 @@
                                  id="io.exam.intellij.plugin.settings.ExamSettingsConfigurable"
                                  displayName="Exam"/>
         <applicationService serviceImplementation="io.exam.intellij.plugin.settings.ExamSettingsState"/>
+
+        <internalFileTemplate name="Exam MQ Spec"/>
+        <internalFileTemplate name="Exam Web Spec"/>
+        <internalFileTemplate name="Exam Spec Class"/>
     </extensions>
 
     <actions>
@@ -41,4 +46,12 @@
             </action>
         </group>
     </actions>
+
+    <actions>
+        <action id="Create.ExamSpec" class="io.exam.intellij.plugin.action.CreateExamSpecAction" icon="/icons/filetypeIcon.svg">
+            <add-to-group group-id="NewGroup"/>
+        </action>
+    </actions>
+
+    <resource-bundle>messages.ExamBundle</resource-bundle>
 </idea-plugin>

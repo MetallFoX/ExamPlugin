@@ -1,0 +1,6 @@
+<e:before-each>
+    <e:given>
+        <e:db-clean tables="#[[$TABLES_TO_CLEAN$]]#"/>
+        <e:db-execute dir="/data/db/" datasets="#[[$INITIAL_DATASETS$]]#" />
+    </e:given>
+</e:before-each>

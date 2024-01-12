@@ -1,0 +1,22 @@
+<html xmlns:e="http://exam.extension.io" xmlns:cc="http://www.concordion.org/2007/concordion" lang="en">
+<body>
+<h1>#[[$SPEC_TITLE$]]#</h1>
+<hr/>
+
+<h2>Описание</h2>
+
+<p>Описание...</p>
+
+<h2>Примеры</h2>
+
+#parse("Exam Before.xhtml")
+
+
+#parse("Exam Get Example.xhtml")
+#[[$END$]]#
+
+<h2>Ошибки</h2>
+#parse("Exam Get Error Example.xhtml")
+
+</body>
+</html>

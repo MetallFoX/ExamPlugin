@@ -1,0 +1,12 @@
+<h3>#[[$EXAMPLE_TITLE$]]#</h3>
+<e:example name="#[[$EXAMPLE_NAME$]]#">
+    <e:get url="#[[$EXAMPLE_ENDPOINT_PATH$]]#" contentType="application/json">
+        <e:case desc="#[[$EXAMPLE_CASE_TITLE$]]#"
+                urlParams="#[[$EXAMPLE_URL_PARAMS$]]#">
+            <e:expected from="/web/expected/#[[$EXAMPLE_EXPECTED_FILE_NAME$]]#"/>
+            <e:where vars="urlParams">
+                <e:vals desc="#[[$EXAMPLE_VALS$]]#"/>
+            </e:where>
+        </e:case>
+    </e:get>
+</e:example>

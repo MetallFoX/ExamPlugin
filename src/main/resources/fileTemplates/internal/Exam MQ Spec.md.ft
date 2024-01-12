@@ -1,0 +1,82 @@
+#[[#]]# #[[$SPEC_TITLE$]]#
+
+#[[##]]# Описание
+
+Сервис слушает топик `#[[$TOPIC$]]#` и #[[$SPEC_DESC$]]#.
+
+#[[##]]# Примеры
+
+#[[###]]# [Перед каждым примером](- "before")
+
+Чистим топики
+
+- Входящий топик пуст: [#[[$TOPIC$]]#](- "e:mq-purge=#TEXT")
+- DLQ пуст: [#[[$TOPIC$]]#.dlq](- "e:mq-purge=#TEXT")
+
+Чистим БД: [#[[$TABLES_TO_CLEAN$]]#](- "e:db-clean=#TEXT")
+
+#[[###]]# ~~Перед каждым примером~~
+
+#[[###]]# #[[$EXAMPLE_TITLE$]]#
+
+#[[####]]# [#[[$EXAMPLE_NAME$]]#](-)
+
+__Given__
+
+---
+#[[$END$]]#
+| id |
+|----|
+| 1  |
+[[#[[$TABLE_ALIAS$]]#?]]
+__When__
+
+---
+
+- [На вход пришло событие:][send]
+- [][event]
+
+__Then__
+
+---
+
+- [Событие обработано]
+
+| id |
+|----|
+| 1  |
+[[#[[$TABLE_ALIAS$]]#?]]
+
+
+#[[###]]# DLQ
+
+#[[####]]# [dlq](-)
+
+__When__
+
+---
+
+- [Невалидное событие:][send]
+-   ```json
+    {}
+    ```
+
+__Then__
+
+---
+
+- [Событие обработано]
+
+и перенаправлено в DLQ:
+
+- [dlq]
+-   ```json
+    {}
+    ```
+
+[event]: /data/mq/#[[$EVENT_FILE_NAME$]]#.json
+[send]: - "e:mq-send=#[[$TOPIC$]]#"
+[Событие обработано]: - "e:mq-check=#[[$TOPIC$]]# awaitAtMostSec=10"
+[dlq]: - "e:mq-check=#[[$TOPIC$]]#.dlq awaitAtMostSec=10"
+[#[[$TABLE_ALIAS$]]#]: - "e:db-set=#[[$TABLE_NAME$]]#"
+[#[[$TABLE_ALIAS$]]#?]: - "e:db-check=#[[$TABLE_NAME$]]# awaitAtMostSec=10"
