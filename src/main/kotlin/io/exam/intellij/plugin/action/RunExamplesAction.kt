@@ -1,28 +1,18 @@
 package io.exam.intellij.plugin.action
 
+import com.intellij.execution.Executor
 import com.intellij.execution.executors.DefaultRunExecutor
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager
 import com.intellij.openapi.externalSystem.model.ProjectSystemId
 import com.intellij.openapi.externalSystem.model.execution.ExternalSystemTaskExecutionSettings
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.module.ModuleUtil
-import com.intellij.openapi.project.DumbAware
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.xml.XmlTag
+import io.exam.intellij.plugin.model.ExamFile.SpecExamplePsiElement
 import io.exam.intellij.plugin.service.ExamService
-import org.intellij.plugins.markdown.lang.psi.impl.MarkdownHeader
-import java.nio.file.FileSystems
 
-open class RunExamplesAction(private val examService: ExamService = ExamService.INSTANCE) : AnAction(), DumbAware {
-    companion object {
-        private const val TEST_RESOURCES_FOLDER = "/src/test/resources/"
-        private const val TASK_NAME_DELIMITER = ":"
-        private val MD_HEADER_OCCURRENCE = Regex("-\\d+$")
-    }
+open class RunExamplesAction(private val service: ExamService = ExamService.INSTANCE) : ExamActionBase() {
 
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.getRequiredData(PlatformDataKeys.PROJECT)
@@ -37,39 +27,29 @@ open class RunExamplesAction(private val examService: ExamService = ExamService.
                     externalSystemIdString = getExternalSystemId()!!
                     externalProjectPath = getLinkedProjectPath()
                     taskNames = listOf(testTaskName()) + tests(
-                        specQualifiedName(file, getLinkedProjectPath()!!),
+                        service.specQualifiedName(file, getLinkedProjectPath()!!),
                         selectedExamples(e)
                     )
                 }
             },
-            getExecutor(),
+            getExecutor().id,
             project,
             ProjectSystemId.findById(externalSystem.getExternalSystemId()!!)!!
         )
     }
 
+    protected open fun getExecutor(): Executor = DefaultRunExecutor.getRunExecutorInstance()
+
     private fun ExternalSystemModulePropertyManager.testTaskName() =
         getLinkedProjectId()!!.replaceBefore(TASK_NAME_DELIMITER, "")
 
-    protected open fun getExecutor() = DefaultRunExecutor.getRunExecutorInstance().id
-
-    private fun tests(spec: String, examples: List<String>) =
-        examples.flatMap { example -> listOf("--tests", "\"$spec.$example\"") }
-            .takeIf { it.isNotEmpty() }
+    private fun tests(spec: String, examples: List<SpecExamplePsiElement>) =
+        examples.flatMap { example -> listOf("--tests", "\"$spec.${example.getRef()}\"") }
+            .takeIf(List<String>::isNotEmpty)
             ?: listOf("--tests", "\"$spec\"")
 
-    private fun selectedExamples(e: AnActionEvent) = e.getData(LangDataKeys.PSI_ELEMENT_ARRAY)
-        ?.mapNotNull {
-            when (it) {
-                is XmlTag -> it.getAttributeValue("name")
-                is MarkdownHeader -> it.anchorText?.replace(MD_HEADER_OCCURRENCE, "")
-                else -> error("Unsupported element type: $it")
-            }
-        } ?: emptyList()
-
-    private fun specQualifiedName(file: VirtualFile, externalProjectPath: String) =
-        // TODO: Use JPS module? See https://plugins.jetbrains.com/docs/intellij/external-builder-api.html
-        file.parent.path.substringAfter("$externalProjectPath$TEST_RESOURCES_FOLDER")
-            .replace(FileSystems.getDefault().separator, ".") + ".${file.nameWithoutExtension}"
+    companion object {
+        private const val TASK_NAME_DELIMITER = ":"
+    }
 }
 

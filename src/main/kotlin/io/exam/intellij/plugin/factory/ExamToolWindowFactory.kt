@@ -15,11 +15,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
-import com.intellij.ui.content.Content
 import com.intellij.ui.content.ContentFactory
 import io.exam.intellij.plugin.model.ExamFile
 import io.exam.intellij.plugin.service.ExamService
-import io.exam.intellij.plugin.ui.structure.ExamTreeViewBuilderFactory
+import io.exam.intellij.plugin.ui.structure.ExamSpecStructureViewBuilder
 
 
 class ExamToolWindowFactory(
@@ -40,33 +39,31 @@ class ExamToolWindowFactory(
 
                     examService.examFile(project, file)?.let { exam ->
                         window.contentManager.removeAllContents(true)
-                        window.contentManager.addContent(viewComponentContent(exam, editor, project))
+                        window.contentManager.addContent(content(structuredView(exam, editor, project)))
                     }
                 }
             }
         }
     }
 
-    private fun addListener(project: Project, window: ToolWindow) {
+    private fun addListener(project: Project, toolWindow: ToolWindow) {
         val multicaster = EditorFactory.getInstance().eventMulticaster
         if (multicaster is EditorEventMulticasterEx) {
             multicaster.addFocusChangeListener(object : FocusChangeListener {
                 override fun focusGained(editor: Editor) {
-                    manageContent(project, window)
+                    manageContent(project, toolWindow)
                 }
-            }, project)
+            }, toolWindow.disposable)
         }
     }
 
     private fun selectedEditor(project: Project) = FileEditorManager.getInstance(project).selectedEditor
 
-    private fun viewComponentContent(file: ExamFile, editor: FileEditor?, project: Project): Content {
-        val view = ExamTreeViewBuilderFactory().getInstance(file)
-            .createStructureView(editor, project) as StructureViewComponent
-        return ContentFactory.getInstance().createContent(
-            view.apply { toolbar = toolbar().apply { targetComponent = view }.component }, "", false
-        )
-    }
+    private fun structuredView(file: ExamFile, editor: FileEditor, project: Project) =
+        ExamSpecStructureViewBuilder(file).createStructureView(editor, project) as StructureViewComponent
+
+    private fun content(view: StructureViewComponent) = ContentFactory.getInstance()
+        .createContent(view.apply { toolbar = toolbar().apply { targetComponent = view }.component }, "", true)
 
     private fun toolbar() = with(ActionManager.getInstance()) {
         createActionToolbar(

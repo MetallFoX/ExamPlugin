@@ -1,11 +1,13 @@
 package io.exam.intellij.plugin.model
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.xml.XmlFile
-import org.intellij.plugins.markdown.lang.psi.impl.MarkdownFile
 
-interface ExamFile : PsiFile
+interface ExamFile : PsiFile {
+    fun getExamples(): List<SpecExamplePsiElement>
 
-class XmlExamFile(private val file: XmlFile) : ExamFile, XmlFile by file
-
-class MarkdownExamFile(private val file: MarkdownFile) : ExamFile, PsiFile by file
+    interface SpecExamplePsiElement : PsiElement {
+        fun getName(): String
+        fun getRef(): String
+    }
+}

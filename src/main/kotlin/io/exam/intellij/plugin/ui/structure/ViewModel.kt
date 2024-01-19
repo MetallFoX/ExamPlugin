@@ -5,63 +5,62 @@ import com.intellij.ide.structureView.FileEditorPositionListener
 import com.intellij.ide.structureView.ModelListener
 import com.intellij.ide.structureView.StructureViewModel
 import com.intellij.ide.structureView.StructureViewTreeElement
+import com.intellij.ide.structureView.TextEditorBasedStructureViewModel
+import com.intellij.ide.structureView.impl.common.PsiTreeElementBase
 import com.intellij.ide.util.treeView.smartTree.Filter
 import com.intellij.ide.util.treeView.smartTree.Grouper
 import com.intellij.ide.util.treeView.smartTree.Sorter
 import com.intellij.navigation.ItemPresentation
+import com.intellij.openapi.editor.Editor
 import io.exam.intellij.plugin.model.ExamFile
-import io.exam.intellij.plugin.model.MarkdownExamFile
-import io.exam.intellij.plugin.model.XmlExamFile
-import io.exam.intellij.plugin.ui.structure.markdown.MarkdownExamSpecTreeElement
-import io.exam.intellij.plugin.ui.structure.xml.XmlExamSpecTreeElement
+import io.exam.intellij.plugin.model.ExamFile.SpecExamplePsiElement
+import io.exam.intellij.plugin.service.ExamService
 
-interface ExamSpecStructureViewModel
-interface ExamSpecTreeElement
-interface ExamExampleElement
 
-class ExamSpecsTreeStructureViewModel(private val files: List<ExamFile>) : StructureViewModel {
-    override fun getRoot() = ExamSpecsTreeElement(files)
+class ExamSpecsTreeStructureViewModel(private val file: ExamFile) : StructureViewModel,
+    StructureViewModel.ElementInfoProvider {
+    override fun getRoot() = ExamSpecsTreeElement(ExamService.INSTANCE.examFiles(file.project, file.virtualFile))
     override fun getGroupers() = emptyArray<Grouper>()
     override fun getSorters() = emptyArray<Sorter>()
-
     override fun getFilters() = emptyArray<Filter>()
-
     override fun dispose() {}
-
     override fun getCurrentEditorElement() = null
-
     override fun addEditorPositionListener(listener: FileEditorPositionListener) {}
-
     override fun removeEditorPositionListener(listener: FileEditorPositionListener) {}
-
     override fun addModelListener(modelListener: ModelListener) {}
-
     override fun removeModelListener(modelListener: ModelListener) {}
-
     override fun shouldEnterElement(element: Any?) = false
+    override fun isAlwaysShowsPlus(element: StructureViewTreeElement?) = false
+    override fun isAlwaysLeaf(element: StructureViewTreeElement?) = false
+}
+
+class ExamSpecStructureViewModel(file: ExamFile, editor: Editor?) : TextEditorBasedStructureViewModel(editor, file),
+    StructureViewModel.ElementInfoProvider {
+    override fun getRoot() = ExamSpecTreeElement(psiFile as ExamFile)
+    override fun isAlwaysShowsPlus(element: StructureViewTreeElement?) = false
+    override fun isAlwaysLeaf(element: StructureViewTreeElement?) = false
 }
 
 class ExamSpecsTreeElement(private val files: List<ExamFile>) : StructureViewTreeElement {
-
     override fun getPresentation() = object : ItemPresentation {
         override fun getPresentableText() = "Text"
         override fun getIcon(unused: Boolean) = AllIcons.Nodes.Unknown
     }
 
-    override fun getChildren() =
-        files.map {
-            when (it) {
-                is XmlExamFile -> XmlExamSpecTreeElement(it)
-                is MarkdownExamFile -> MarkdownExamSpecTreeElement(it)
-                else -> error("Unknown")
-            }
-        }.toTypedArray()
+    override fun getChildren() = files.map(::ExamSpecTreeElement).toTypedArray()
 
-    override fun navigate(requestFocus: Boolean) {}
+    override fun getValue() = this
+}
 
-    override fun canNavigate() = false
+class ExamSpecTreeElement(private val file: ExamFile) : PsiTreeElementBase<ExamFile>(file) {
+    override fun getPresentableText() = file.name
 
-    override fun canNavigateToSource() = false
+    override fun getChildrenBase() = file.getExamples().map(::ExamSpecExampleTreeElement)
+}
 
-    override fun getValue() = null
+class ExamSpecExampleTreeElement(private val element: SpecExamplePsiElement) :
+    PsiTreeElementBase<SpecExamplePsiElement>(element) {
+    override fun getPresentableText() = element.getName()
+    override fun getChildrenBase() = emptyList<StructureViewTreeElement>()
+    override fun getIcon(open: Boolean) = AllIcons.Scope.Tests
 }

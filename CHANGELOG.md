@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Add all project specs navigation
+
 ## [0.2.0] - 2024-01-12
 
 ### Added

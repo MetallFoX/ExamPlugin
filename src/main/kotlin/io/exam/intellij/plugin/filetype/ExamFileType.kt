@@ -12,14 +12,14 @@ import io.exam.intellij.plugin.ui.ExamIcons
 import org.intellij.plugins.markdown.lang.MarkdownLanguage
 
 class ExamFileType : FileType, LanguageFileType(ExamLanguage.INSTANCE) {
-    companion object {
-        val INSTANCE = ExamFileType()
-    }
-
     override fun getName() = "Exam"
     override fun getDescription() = "Exam"
     override fun getDefaultExtension() = "exam.xml;exam.html;exam.xhtml;exam.md"
     override fun getIcon() = ExamIcons.FILE
+
+    companion object {
+        val INSTANCE = ExamFileType()
+    }
 }
 
 class ExamLanguage : Language("Exam") {
