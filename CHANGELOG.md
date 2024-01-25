@@ -6,7 +6,7 @@
 
 ### Added
 
-- Add all project specs navigation
+- Add asciidoc support #13
 
 ## [0.2.0] - 2024-01-12
 

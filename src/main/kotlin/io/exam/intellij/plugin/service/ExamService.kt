@@ -16,9 +16,11 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScopes
 import com.intellij.psi.xml.XmlFile
 import io.exam.intellij.plugin.filetype.ExamFileType
+import io.exam.intellij.plugin.model.asciidoc.AsciiDocExamFile
 import io.exam.intellij.plugin.model.markdown.MarkdownExamFile
 import io.exam.intellij.plugin.model.xml.XmlExamFile
 import io.exam.intellij.plugin.settings.ExamSettingsState
+import org.asciidoc.intellij.psi.AsciiDocFile
 import org.intellij.plugins.markdown.lang.MarkdownFileType
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownFile
 import org.jetbrains.jps.model.java.JavaResourceRootType
@@ -38,6 +40,7 @@ class ExamService {
         when {
             it is XmlFile && isExamFile(it) -> XmlExamFile(it)
             it is MarkdownFile -> MarkdownExamFile(it)
+            it is AsciiDocFile -> AsciiDocExamFile(it)
             else -> null
         }
     }

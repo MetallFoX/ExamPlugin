@@ -5,6 +5,7 @@ import com.intellij.navigation.ItemPresentation
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.PsiTreeUtil.collectElementsOfType
 import io.exam.intellij.plugin.filetype.ExamFileType
 import io.exam.intellij.plugin.model.ExamFile
 import io.exam.intellij.plugin.model.ExamFile.SpecExamplePsiElement
@@ -25,12 +26,12 @@ class MarkdownExamFile(private val file: MarkdownFile) : ExamFile, PsiFile by fi
         return getExamples().firstOrNull()
     }
 
-    override fun getExamples() = PsiTreeUtil.collectElements(file, ::isExample)
-        .map { it as MarkdownHeader }
+    override fun getExamples() = collectElementsOfType(file, MarkdownHeader::class.java)
+        .filter(::isExample)
         .map(::MarkdownSpecExamplePsiElement)
 
-    private fun isExample(element: PsiElement) =
-        element is MarkdownHeader && getLink(element)?.let { getLinkTitle(it)?.text != BEFORE_TITLE } ?: false
+    private fun isExample(element: MarkdownHeader) =
+        getLink(element)?.let { getLinkTitle(it)?.text != BEFORE_TITLE } ?: false
 
     private fun getLinkTitle(element: MarkdownInlineLink) = MarkdownLinkDefinition(element.node).linkTitle
 

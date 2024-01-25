@@ -9,6 +9,7 @@
     <depends>com.intellij.modules.java</depends>
     <depends>org.intellij.plugins.markdown</depends>
     <depends>org.jetbrains.kotlin</depends>
+    <depends>org.asciidoctor.intellij.asciidoc</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow id="Exam" secondary="false" icon="AllIcons.General.Modified" anchor="right"

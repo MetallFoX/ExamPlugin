@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.LanguageSubstitutor
 import io.exam.intellij.plugin.ui.ExamIcons
+import org.asciidoc.intellij.AsciiDocLanguage
 import org.intellij.plugins.markdown.lang.MarkdownLanguage
 
 class ExamFileType : FileType, LanguageFileType(ExamLanguage.INSTANCE) {
@@ -35,6 +36,7 @@ class ExamLanguageSubstitutor : LanguageSubstitutor() {
             "html" -> XHTMLLanguage.INSTANCE
             "xhtml" -> XHTMLLanguage.INSTANCE
             "md" -> MarkdownLanguage.INSTANCE
+            "adoc" -> AsciiDocLanguage.INSTANCE
             else -> ExamLanguage.INSTANCE
         } ?: error("Unsupported Exam file type extension: ${file.extension}")
 }

@@ -4,6 +4,10 @@ import org.jetbrains.changelog.markdownToHTML
 fun properties(key: String) = providers.gradleProperty(key)
 fun environment(key: String) = providers.environmentVariable(key)
 
+intellij {
+    plugins.set(listOf("org.asciidoctor.intellij.asciidoc:0.41.6"))
+}
+
 plugins {
     id("java") // Java support
     alias(libs.plugins.kotlin) // Kotlin support
