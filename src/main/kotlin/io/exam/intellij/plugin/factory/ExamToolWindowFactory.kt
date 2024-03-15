@@ -31,15 +31,15 @@ class ExamToolWindowFactory(
         addListener(project, toolWindow)
     }
 
-    private fun manageContent(project: Project, window: ToolWindow) {
+    private fun manageContent(project: Project, toolWindow: ToolWindow) {
         selectedEditor(project)?.let { editor ->
             editor.file?.let { file ->
                 if (currentFile != file) {
                     currentFile = file
 
                     examService.examFile(project, file)?.let { exam ->
-                        window.contentManager.removeAllContents(true)
-                        window.contentManager.addContent(content(structuredView(exam, editor, project)))
+                        toolWindow.contentManager.removeAllContents(true)
+                        toolWindow.contentManager.addContent(content(structuredView(exam, editor, project)))
                     }
                 }
             }

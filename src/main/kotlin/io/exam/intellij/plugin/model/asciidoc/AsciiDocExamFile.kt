@@ -7,6 +7,7 @@ import com.intellij.psi.util.PsiTreeUtil.collectElementsOfType
 import io.exam.intellij.plugin.filetype.ExamFileType
 import io.exam.intellij.plugin.model.ExamFile
 import io.exam.intellij.plugin.model.ExamFile.SpecExamplePsiElement
+import org.asciidoc.intellij.psi.AsciiDocBlock.Type.EXAMPLE
 import org.asciidoc.intellij.psi.AsciiDocFile
 import org.asciidoc.intellij.psi.AsciiDocStandardBlock
 import org.asciidoc.intellij.psi.AsciiDocTitle
@@ -30,9 +31,10 @@ class AsciiDocExamFile(private val file: AsciiDocFile) : ExamFile, PsiFile by fi
         .mapNotNull { it.getChildOfType<AsciiDocTitle>() }
         .mapIndexed { i, el -> AsciiDocSpecExamplePsiElement(el, i + 1) }
 
-    private fun isExample(element: AsciiDocStandardBlock) = element.getChildOfType<AsciiDocTitle>()
-        ?.getNextSiblingIgnoringWhitespace()
-        ?.text == EXAMPLE_BLOCK_DELIMITER
+    private fun isExample(element: AsciiDocStandardBlock) =
+        element.type == EXAMPLE && element.getChildOfType<AsciiDocTitle>()
+            ?.getNextSiblingIgnoringWhitespace()
+            ?.text == EXAMPLE_BLOCK_DELIMITER
 
     override fun getFileType() = ExamFileType.INSTANCE
 }

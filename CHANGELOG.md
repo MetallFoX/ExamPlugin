@@ -3,6 +3,9 @@
 # Exam Plugin Changelog
 
 ## [Unreleased]
+- Add common exam commands insertion actions #16
+
+## [0.3.0] - 2024-01-25
 
 ### Added
 
@@ -30,6 +33,7 @@
 
 - Invalid test name for markdown example name matching other header #8
 
-[Unreleased]: https://github.com/MetallFoX/ExamPlugin/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/MetallFoX/ExamPlugin/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/MetallFoX/ExamPlugin/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/MetallFoX/ExamPlugin/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/MetallFoX/ExamPlugin/commits/v0.1.0

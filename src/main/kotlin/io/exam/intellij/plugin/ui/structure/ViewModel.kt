@@ -4,8 +4,8 @@ import com.intellij.icons.AllIcons
 import com.intellij.ide.structureView.FileEditorPositionListener
 import com.intellij.ide.structureView.ModelListener
 import com.intellij.ide.structureView.StructureViewModel
+import com.intellij.ide.structureView.StructureViewModelBase
 import com.intellij.ide.structureView.StructureViewTreeElement
-import com.intellij.ide.structureView.TextEditorBasedStructureViewModel
 import com.intellij.ide.structureView.impl.common.PsiTreeElementBase
 import com.intellij.ide.util.treeView.smartTree.Filter
 import com.intellij.ide.util.treeView.smartTree.Grouper
@@ -34,9 +34,9 @@ class ExamSpecsTreeStructureViewModel(private val file: ExamFile) : StructureVie
     override fun isAlwaysLeaf(element: StructureViewTreeElement?) = false
 }
 
-class ExamSpecStructureViewModel(file: ExamFile, editor: Editor?) : TextEditorBasedStructureViewModel(editor, file),
+class ExamSpecStructureViewModel(file: ExamFile, editor: Editor?) :
+    StructureViewModelBase(file, editor, ExamSpecTreeElement(file)),
     StructureViewModel.ElementInfoProvider {
-    override fun getRoot() = ExamSpecTreeElement(psiFile as ExamFile)
     override fun isAlwaysShowsPlus(element: StructureViewTreeElement?) = false
     override fun isAlwaysLeaf(element: StructureViewTreeElement?) = false
 }

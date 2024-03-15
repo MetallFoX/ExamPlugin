@@ -46,13 +46,45 @@
                     icon="AllIcons.General.Web">
             </action>
         </group>
-    </actions>
 
-    <actions>
         <action id="Create.ExamSpec" class="io.exam.intellij.plugin.action.CreateExamSpecAction" icon="/icons/filetypeIcon.svg">
             <add-to-group group-id="NewGroup"/>
         </action>
-    </actions>
 
+        <group id="Exam.TextEdit" class="io.exam.intellij.plugin.action.ExamTextEditActionGroup" compact="true">
+            <group id="Exam.TextFormatting" compact="true" description="Text Markup actions" popup="true" text="Exam" class="io.exam.intellij.plugin.action.ExamTextEditActionGroup">
+                <action id="exam.make.example" class="io.exam.intellij.plugin.action.MakeExample" text="Example" description="Make example block" />
+
+                <action id="exam.make.http" class="io.exam.intellij.plugin.action.MakeHttp" text="Http" description="Make http block" icon="AllIcons.General.Web"/>
+
+                <group id="Exam.TextFormatting.DB" compact="true" description="Text Markup actions" popup="true" text="DB" class="io.exam.intellij.plugin.action.ExamTextEditActionGroup">
+                    <action id="exam.make.dbcheck" class="io.exam.intellij.plugin.action.MakeDBCheck" text="Check" description="Make db-check block" icon="AllIcons.Nodes.DataTables" />
+                    <action id="exam.make.dbset" class="io.exam.intellij.plugin.action.MakeDBSet" text="Set" description="Make db-set block" icon="AllIcons.Nodes.DataTables"/>
+                    <action id="exam.make.dbclean" class="io.exam.intellij.plugin.action.MakeDBClean" text="Clean" description="Make db-clean block" icon="AllIcons.Nodes.DataTables"/>
+                </group>
+
+                <group id="Exam.TextFormatting.MQ" compact="true" description="Text Markup actions" popup="true" text="MQ" class="io.exam.intellij.plugin.action.ExamTextEditActionGroup">
+                    <action id="exam.make.mqcheck" class="io.exam.intellij.plugin.action.MakeMQCheck" text="Check" description="Make mq-check block" icon="AllIcons.Webreferences.MessageQueue" />
+                    <action id="exam.make.mqcheck.empty" class="io.exam.intellij.plugin.action.MakeMQCheckEmpty" text="Check Empty" description="Make mq-check is empty block" icon="AllIcons.Webreferences.MessageQueue" />
+                    <action id="exam.make.mqset" class="io.exam.intellij.plugin.action.MakeMQSet" text="Set" description="Make mq-set block" icon="AllIcons.Webreferences.MessageQueue" />
+                    <action id="exam.make.mqclean" class="io.exam.intellij.plugin.action.MakeMQClean" text="Clean" description="Make mq-clean block" icon="AllIcons.Webreferences.MessageQueue"  />
+                </group>
+<!--
+                <action id="asciidoc.maketitle" class="org.asciidoc.intellij.actions.asciidoc.MakeTitle" text="Toggle Title" description="Make title" />
+                <action id="asciidoc.makemono" class="org.asciidoc.intellij.actions.asciidoc.MakeMono" text="Toggle Mono" description="Toggle text mono" icon="AsciiDocIcons.EditorActions.CODE_SPAN" />
+                <action id="asciidoc.makestrikethrough" class="org.asciidoc.intellij.actions.asciidoc.MakeStrikethrough" text="Toggle Strike Through" description="Toggle text strike through" icon="AsciiDocIcons.EditorActions.STRIKE_THROUGH" />
+                <action id="asciidoc.makehighlighted" class="org.asciidoc.intellij.actions.asciidoc.MakeHighlighted" text="Toggle Highlight" description="Toggle text highlighted" icon="AsciiDocIcons.EditorActions.HIGHLIGHTED" />
+                <action id="asciidoc.makelink" class="org.asciidoc.intellij.actions.asciidoc.MakeLink" text="Create Link" description="Make link" icon="AsciiDocIcons.EditorActions.LINK" />
+                <action class="org.asciidoc.intellij.actions.asciidoc.PasteImageAction" id="org.asciidoc.intellij.actions.asciidoc.PasteImageAction" text="Paste Image..." description="Paste image from clipboard" icon="AsciiDocIcons.EditorActions.IMAGE" />
+                <action class="org.asciidoc.intellij.actions.asciidoc.PasteHtmlAction" id="org.asciidoc.intellij.actions.asciidoc.PasteHtmlAction" text="Paste Formatted Text" description="Paste formatted text from clipboard" icon="AsciiDocIcons.EditorActions.PASTE" />
+                <action id="asciidoc.tables.tabledialog" class="org.asciidoc.intellij.actions.asciidoc.CreateTableAction" text="Create Table Dialog..." description="Insert a table at the caret" icon="AsciiDocIcons.EditorActions.TABLE" />
+                <action id="asciidoc.tables.pastetabledialog" class="org.asciidoc.intellij.actions.asciidoc.PasteTableAction" text="Paste Table..." description="Paste table data from clipboard" icon="AsciiDocIcons.EditorActions.TABLE" />
+-->
+            </group>
+            <separator />
+            <add-to-group group-id="EditorPopupMenu" anchor="last" />
+            <!--<add-to-group group-id="AsciiDoc.TextFormatting" anchor="last" />-->
+        </group>
+    </actions>
     <resource-bundle>messages.ExamBundle</resource-bundle>
 </idea-plugin>
